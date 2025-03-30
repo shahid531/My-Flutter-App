@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:my_flutter_app/main.dart';
+
+import 'display_picture_screen.dart';
 
 class CameraUi extends StatefulWidget {
   const CameraUi({super.key});
@@ -10,11 +11,11 @@ class CameraUi extends StatefulWidget {
 }
 
 class _CameraUiState extends State<CameraUi> {
-   CameraController? _controller;
+  CameraController? _controller;
   List<CameraDescription>? _cameras;
   bool _isCameraInitialized = false;
 
-@override
+  @override
   void initState() {
     initializeCamera();
     super.initState();
@@ -22,17 +23,28 @@ class _CameraUiState extends State<CameraUi> {
 
   @override
   Widget build(BuildContext context) {
-    
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: TextButton(onPressed: ()async{
-            await captureImage();
-          }, child: Text('Camera')),
+        body: Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                child: _isCameraInitialized ? CameraPreview(_controller!): Center(child: CircularProgressIndicator()),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                await captureImage();
+              },
+              child: Text('Capture'),
+            ),
+          ],
         ),
       ),
     );
   }
+
   Future<void> initializeCamera() async {
     _cameras = await availableCameras();
     _controller = CameraController(_cameras!.first, ResolutionPreset.medium);
@@ -42,9 +54,14 @@ class _CameraUiState extends State<CameraUi> {
       _isCameraInitialized = true;
     });
   }
-  Future<void> captureImage() async {
-  final image = await _controller!.takePicture();
-  print("Image saved at: ${image.path}");
-}
 
+  Future<void> captureImage() async {
+    final image = await _controller!.takePicture();
+    if (!context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => DisplayPictureScreen(imagePath: image.path),
+      ),
+    );
+  }
 }

@@ -14,6 +14,10 @@
         <string>fetch</string>
         <string>remote-notification</string>
     </array>
+    <key>NSCameraUsageDescription</key>
+    <string>Explanation on why the camera access is needed.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Explanation on why the microphone access is needed.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
